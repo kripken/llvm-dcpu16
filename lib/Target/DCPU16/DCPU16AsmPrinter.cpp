@@ -126,13 +126,10 @@ void DCPU16AsmPrinter::printSrcMemOperand(const MachineInstr *MI, int OpNum,
     // Only print the immediate if it isn't 0, easier to read and
     // generates more efficient code on bad assemblers
     if (Disp.getImm() != 0) {
-      O << "+";
-      O << "0x";
-      O.write_hex(Disp.getImm() & 0xFFFF);
+      O << "+" << Disp.getImm();
     }
   } else {
-    O << "0x";
-    O.write_hex(Disp.getImm() & 0xFFFF);
+    O << Disp.getImm();
   }
 
   O << ']';

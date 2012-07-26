@@ -35,8 +35,7 @@ void DCPU16InstPrinter::printPCRelImmOperand(const MCInst *MI, unsigned OpNo,
                                              raw_ostream &O) {
   const MCOperand &Op = MI->getOperand(OpNo);
   if (Op.isImm())  {
-	  O << "0x";
-	  O.write_hex((Op.getImm()) & 0xFFFF);
+	  O << Op.getImm();
   } else {
     assert(Op.isExpr() && "unknown pcrel immediate operand");
     O << *Op.getExpr();
@@ -50,8 +49,7 @@ void DCPU16InstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
   if (Op.isReg()) {
     O << getRegisterName(Op.getReg());
   } else if (Op.isImm()) {
-	  O << "0x";
-	  O.write_hex(Op.getImm() & 0xFFFF);
+	  O << Op.getImm();
   } else {
     assert(Op.isExpr() && "unknown operand kind in printOperand");
     O << *Op.getExpr();
@@ -100,12 +98,10 @@ void DCPU16InstPrinter::printSrcMemOperand(const MCInst *MI, unsigned OpNo,
       // generates more efficient code on bad assemblers
       if (Disp.getImm() != 0) {
         O << "+";
-        O << "0x";
-        O.write_hex(Disp.getImm() & 0xFFFF);
+        O << Disp.getImm();
       }
     } else {
-      O << "0x";
-      O.write_hex(Disp.getImm() & 0xFFFF);
+      O << Disp.getImm();
     }
   }
 
