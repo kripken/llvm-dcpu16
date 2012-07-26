@@ -28,6 +28,7 @@ using namespace llvm;
 void DCPU16InstPrinter::printInst(const MCInst *MI, raw_ostream &O,
                                   StringRef Annot) {
   printInstruction(MI, O);
+  O << ";";
   printAnnotation(O, Annot);
 }
 
