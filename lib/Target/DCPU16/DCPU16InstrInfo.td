@@ -270,7 +270,7 @@ def PUSH16r  : II16r<0x0,
 let neverHasSideEffects = 1 in {
 def MOV16rr : I16rr<0x0,
                     (outs GEXR16:$dst), (ins GEXR16:$src),
-                    "SET\t{$dst, $src}",
+                    "$dst = $src",
                     []>;
 }
 
@@ -278,37 +278,37 @@ def MOV16rr : I16rr<0x0,
 let isReMaterializable = 1, isAsCheapAsAMove = 1 in {
 def MOV16ri : I16ri<0x0,
                     (outs GEXR16:$dst), (ins i16imm:$src),
-                    "SET\t{$dst, $src}",
+                    "$dst = $src",
                     [(set GEXR16:$dst, imm:$src)]>;
 }
 
 let canFoldAsLoad = 1, isReMaterializable = 1 in {
 def MOV16rm : I16rm<0x0,
                     (outs GEXR16:$dst), (ins memsrc:$src),
-                    "SET\t{$dst, $src}",
+                    "$dst = $src",
                     [(set GEXR16:$dst, (load addr:$src))]>;
 }
 
 let canFoldAsLoad = 1, isReMaterializable = 1 in {
 def MOV16rmi8 : I16rm<0x0,
                     (outs GEXR16:$dst), (ins memsrc:$src),
-                    "SET\t{$dst, $src}",
+                    "$dst = $src",
                     [(set GEXR16:$dst, (zextloadi8 addr:$src))]>;
 }
 
 def MOV16mi : I16mi<0x0,
                     (outs), (ins memdst:$dst, i16imm:$src),
-                    "SET\t{$dst, $src}",
+                    "$dst = $src",
                     [(store (i16 imm:$src), addr:$dst)]>;
 
 def MOV16mr : I16mr<0x0,
                     (outs), (ins memdst:$dst, GEXR16:$src),
-                    "SET\t{$dst, $src}",
+                    "$dst = $src",
                     [(store GEXR16:$src, addr:$dst)]>;
 
 def MOV16mm : I16mm<0x0,
                     (outs), (ins memdst:$dst, memsrc:$src),
-                    "SET\t{$dst, $src}",
+                    "$dst = $src",
                     [(store (i16 (load addr:$src)), addr:$dst)]>;
 
 //===----------------------------------------------------------------------===//
