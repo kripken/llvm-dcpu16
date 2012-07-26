@@ -29,7 +29,7 @@ def Z  : DCPU16Reg<0x5,  "Z">;
 def I  : DCPU16Reg<0x6,  "I">;
 def J  : DCPU16Reg<0x7,  "J">; // FP if needed
 
-def SP  : DCPU16Reg<0x1b,  "SP">;
+def SP  : DCPU16Reg<0x1b,  "STACKTOP">;
 def EX  : DCPU16Reg<0x1d,  "EX">;
 
 // Volatile registers
