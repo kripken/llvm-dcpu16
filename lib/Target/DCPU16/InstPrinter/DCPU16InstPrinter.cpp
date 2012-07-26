@@ -72,9 +72,7 @@ void DCPU16InstPrinter::printSrcMemOperand(const MCInst *MI, unsigned OpNo,
     } else {
       assert(Disp.isExpr() &&
              "Expected immediate or expression in displacement field");
-      O << "HEAP[STACKTOP+";
-      O << *Disp.getExpr();
-      O << "]";
+      printStackAccess(Disp.getExpr(), O);
     }
     return;
   }
