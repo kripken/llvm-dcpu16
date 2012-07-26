@@ -20,12 +20,12 @@ void DCPU16MCAsmInfo::anchor() { }
 DCPU16MCAsmInfo::DCPU16MCAsmInfo(const Target &T, StringRef TT) {
   LabelPrefix = ":";
   LabelSuffix = "";
-  PointerSize = 2;
+  PointerSize = 4;
 
-  PrivateGlobalPrefix = ".L";
+  PrivateGlobalPrefix = "_";
   WeakRefDirective ="\t.weak\t";
   PCSymbol=".";
-  CommentString = ";";
+  CommentString = "//";
 
   AlignmentIsInBytes = false;
   // TODO(krasin): support .align
