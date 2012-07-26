@@ -76,7 +76,7 @@ namespace {
     void EmitFunctionBodyStart() {
       SmallString<256> StringData;
       raw_svector_ostream OS(StringData);
-      OS << "function _waka() {\n";
+      OS << "function() {\n";
       OutStreamer.EmitRawText(OS.str());
     }
 
@@ -86,6 +86,28 @@ namespace {
       OS << "}\n";
       OutStreamer.EmitRawText(OS.str());
     }
+
+    virtual void EmitConstantPool() { // TODO: jsify
+      AsmPrinter::EmitConstantPool();
+    }
+
+    /// EmitGlobalVariable - Emit the specified global variable to the .s file.
+    virtual void EmitGlobalVariable(const GlobalVariable *GV) {
+      {
+        SmallString<256> StringData;
+        raw_svector_ostream OS(StringData);
+        //OS << "a GLOOOOBALVAR..\n";
+        OutStreamer.EmitRawText(OS.str());
+      }
+      AsmPrinter::EmitGlobalVariable(GV);
+      {
+        SmallString<256> StringData;
+        raw_svector_ostream OS(StringData);
+        //OS << "a GLOOOOBALVARed\n";
+        OutStreamer.EmitRawText(OS.str());
+      }
+    }
+
   };
 } // end of anonymous namespace
 
