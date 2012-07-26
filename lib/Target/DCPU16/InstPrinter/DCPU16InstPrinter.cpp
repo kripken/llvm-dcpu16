@@ -58,6 +58,10 @@ void DCPU16InstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
   }
 }
 
+static void printStackAccess(int offset, raw_ostream &O) {
+  O << "HEAP[STACKTOP+" << offset << "]";
+}
+
 void DCPU16InstPrinter::printSrcMemOperand(const MCInst *MI, unsigned OpNo,
                                            raw_ostream &O,
                                            const char *Modifier) {
@@ -67,17 +71,13 @@ void DCPU16InstPrinter::printSrcMemOperand(const MCInst *MI, unsigned OpNo,
   // Special case for PICK n syntax
   if (Base.getReg() == DCPU16::SP) {
     if (Disp.isImm()) {
-      if (Disp.getImm() == 0) {
-        O << "PEEK";  // equiv. to [SP]
-      } else {
-        O << "PICK 0x"; // equiv. to [SP+x]
-        O.write_hex(Disp.getImm() & 0xFFFF);
-      }
+      printStackAccess(Disp.getImm(), O);
     } else {
       assert(Disp.isExpr() &&
              "Expected immediate or expression in displacement field");
-      O << "PICK ";
+      O << "HEAP[STACKTOP+";
       O << *Disp.getExpr();
+      O << "]";
     }
     return;
   }

@@ -97,6 +97,10 @@ void DCPU16AsmPrinter::printOperand(const MachineInstr *MI, int OpNum,
   }
 }
 
+static void printStackAccess(int offset, raw_ostream &O) {
+  O << "HEAP[STACKTOP+" << offset << "]";
+}
+
 void DCPU16AsmPrinter::printSrcMemOperand(const MachineInstr *MI, int OpNum,
                                           raw_ostream &O) {
   const MachineOperand &Base = MI->getOperand(OpNum);
@@ -105,12 +109,7 @@ void DCPU16AsmPrinter::printSrcMemOperand(const MachineInstr *MI, int OpNum,
   // Special case for PICK n syntax
   if (Base.getReg() == DCPU16::SP) {
     if (Disp.isImm()) {
-      if (Disp.getImm() == 0) {
-        O << "PEEK";  // equiv. to [SP]
-      } else {
-        O << "PICK 0x"; // equiv. to [SP+x]
-        O.write_hex(Disp.getImm() & 0xFFFF);
-      }
+      printStackAccess(Disp.getImm(), O);
     } else {
       llvm_unreachable("Unsupported src mem expression in inline asm");
     }
