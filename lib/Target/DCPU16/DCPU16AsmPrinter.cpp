@@ -34,6 +34,7 @@
 #include "llvm/Target/Mangler.h"
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/ADT/SmallString.h"
 using namespace llvm;
 
 namespace {
@@ -57,6 +58,32 @@ namespace {
                                unsigned OpNo, unsigned AsmVariant,
                                const char *ExtraCode, raw_ostream &O);
     void EmitInstruction(const MachineInstr *MI);
+
+    // Override runOnMachineFunction in order to override normal output and generate JS
+/*
+    virtual bool runOnMachineFunction(MachineFunction &MF) {
+      SmallString<256> StringData;
+      raw_svector_ostream OS(StringData);
+      OS << "function _" << waka waka";
+      OS << '\n';
+      OutStreamer.EmitRawText(OS.str());
+      return false;
+    }
+*/
+
+    void EmitFunctionBodyStart() {
+      SmallString<256> StringData;
+      raw_svector_ostream OS(StringData);
+      OS << "function _waka() {\n";
+      OutStreamer.EmitRawText(OS.str());
+    }
+
+    void EmitFunctionBodyEnd() {
+      SmallString<256> StringData;
+      raw_svector_ostream OS(StringData);
+      OS << "}\n";
+      OutStreamer.EmitRawText(OS.str());
+    }
   };
 } // end of anonymous namespace
 

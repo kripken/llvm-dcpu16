@@ -18,10 +18,11 @@ using namespace llvm;
 void DCPU16MCAsmInfo::anchor() { }
 
 DCPU16MCAsmInfo::DCPU16MCAsmInfo(const Target &T, StringRef TT) {
-  LabelPrefix = ":";
+  LabelPrefix = "//"; // Should not really be used
   LabelSuffix = "";
   PointerSize = 4;
 
+  GlobalPrefix = "_";
   PrivateGlobalPrefix = "_";
   WeakRefDirective ="\t.weak\t";
   PCSymbol=".";
@@ -31,7 +32,8 @@ DCPU16MCAsmInfo::DCPU16MCAsmInfo(const Target &T, StringRef TT) {
   // TODO(krasin): support .align
   // https://github.com/krasin/llvm-dcpu16/issues/52
   AlignDirective = "\t; .align\t";
-  AllowNameToStartWithDigit = true;
+  AllowNameToStartWithDigit = false;
+  AllowPeriodsInName = false;
   UsesELFSectionDirectiveForBSS = false;
   HasDotTypeDotSizeDirective = false;
 
