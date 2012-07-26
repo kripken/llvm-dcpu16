@@ -380,23 +380,23 @@ multiclass BASIC_NORMAL<bits<4> OpVal, string OpcStr, SDNode OpNode> {
 // Arithmetic Instructions
 
 let Defs = [EX] in {
-  defm ADD16   : BASIC_RR_IS_COM <0x0, "ADD", add>,  BASIC_NORMAL<0x0, "ADD", add>;
-  defm AND16   : BASIC_RR_IS_COM <0x0, "AND", and>,  BASIC_NORMAL<0x0, "AND", and>;
-  defm OR16    : BASIC_RR_IS_COM <0x0, "BOR", or>,   BASIC_NORMAL<0x0, "BOR", or>;
-  defm XOR16   : BASIC_RR_IS_COM <0x0, "XOR", xor>,  BASIC_NORMAL<0x0, "XOR", xor>;
+  defm ADD16   : BASIC_RR_IS_COM <0x0, "+", add>,  BASIC_NORMAL<0x0, "+", add>;
+  defm AND16   : BASIC_RR_IS_COM <0x0, "&", and>,  BASIC_NORMAL<0x0, "&", and>;
+  defm OR16    : BASIC_RR_IS_COM <0x0, "|", or>,   BASIC_NORMAL<0x0, "|", or>;
+  defm XOR16   : BASIC_RR_IS_COM <0x0, "^", xor>,  BASIC_NORMAL<0x0, "^", xor>;
   defm SUB16   : BASIC_RR_NON_COM<0x0, "-", sub>,  BASIC_NORMAL<0x0, "-", sub>;
-  defm MUL16   : BASIC_RR_IS_COM <0x0, "MUL", mul>,  BASIC_NORMAL<0x0, "MUL", mul>;
-  defm SMUL16  : BASIC_RR_IS_COM <0x0, "MLI", DCPU16smul>,
-                   BASIC_NORMAL<0x0, "MLI", DCPU16smul>;
-  defm UMUL16  : BASIC_RR_IS_COM <0x0, "MUL", DCPU16umul>,
-                   BASIC_NORMAL<0x0, "MUL", DCPU16umul>;
-  defm DIV16   : BASIC_RR_NON_COM<0x0, "DIV", udiv>, BASIC_NORMAL<0x0, "DIV", udiv>;
-  defm DVI16   : BASIC_RR_NON_COM<0x0, "DVI", sdiv>, BASIC_NORMAL<0x0, "DVI", sdiv>;
-  defm SRL16   : BASIC_RR_NON_COM<0x0, "SHR", srl>,  BASIC_NORMAL<0x0, "SHR", srl>;
-  defm SRA16   : BASIC_RR_NON_COM<0x0, "ASR", sra>,  BASIC_NORMAL<0x0, "ASR", sra>;
-  defm SHL16   : BASIC_RR_NON_COM<0x0, "SHL", shl>,  BASIC_NORMAL<0x0, "SHL", shl>;
-  defm UREM16  : BASIC_RR_NON_COM<0x0, "MOD", urem>, BASIC_NORMAL<0x0, "MOD", urem>;
-  defm SREM16  : BASIC_RR_NON_COM<0x0, "MDI", srem>, BASIC_NORMAL<0x0, "MDI", srem>;
+  defm MUL16   : BASIC_RR_IS_COM <0x0, "*", mul>,  BASIC_NORMAL<0x0, "*", mul>;
+  defm SMUL16  : BASIC_RR_IS_COM <0x0, "*", DCPU16smul>,
+                   BASIC_NORMAL<0x0, "*", DCPU16smul>;
+  defm UMUL16  : BASIC_RR_IS_COM <0x0, "*", DCPU16umul>,
+                   BASIC_NORMAL<0x0, "*", DCPU16umul>;
+  defm DIV16   : BASIC_RR_NON_COM<0x0, "/", udiv>, BASIC_NORMAL<0x0, "/", udiv>; // XXX needs rounding and rounding correction
+  defm DVI16   : BASIC_RR_NON_COM<0x0, "/", sdiv>, BASIC_NORMAL<0x0, "/", sdiv>;
+  defm SRL16   : BASIC_RR_NON_COM<0x0, ">>>", srl>,  BASIC_NORMAL<0x0, ">>>", srl>;
+  defm SRA16   : BASIC_RR_NON_COM<0x0, ">>", sra>,  BASIC_NORMAL<0x0, ">>", sra>;
+  defm SHL16   : BASIC_RR_NON_COM<0x0, "<<", shl>,  BASIC_NORMAL<0x0, "<<", shl>;
+  defm UREM16  : BASIC_RR_NON_COM<0x0, "%", urem>, BASIC_NORMAL<0x0, "%", urem>;
+  defm SREM16  : BASIC_RR_NON_COM<0x0, "%", srem>, BASIC_NORMAL<0x0, "%", srem>;
 
   let Uses = [EX] in {
     defm ADC16   : BASIC_RR_IS_COM <0x0, "ADX", adde>, BASIC_NORMAL<0x0, "ADX", adde>;
