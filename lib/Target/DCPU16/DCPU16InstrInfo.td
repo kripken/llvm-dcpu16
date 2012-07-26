@@ -328,7 +328,7 @@ multiclass BASIC_RR_NON_COM<bits<4> OpVal, string OpcStr, SDNode OpNode> {
   let Constraints = "$src = $dst" in {
   def rr: I16rr<OpVal,
                     (outs GR16:$dst), (ins GR16:$src, GEXR16:$src2),
-                    OpcStr#"\t{$dst, $src2}",
+                    !strconcat("$dst = $dst ", OpcStr, " $src2"),
                     [(set GR16:$dst, (OpNode GR16:$src, GEXR16:$src2)),
                      (implicit EX)]>;
   }
@@ -338,12 +338,12 @@ multiclass BASIC_NORMAL<bits<4> OpVal, string OpcStr, SDNode OpNode> {
   let Constraints = "$src = $dst" in {
   def rm: I16rm<OpVal,
                     (outs GR16:$dst), (ins GR16:$src, memsrc:$src2),
-                    OpcStr#"\t{$dst, $src2}",
+                    !strconcat("$dst = $dst ", OpcStr, " $src2"),
                     [(set GR16:$dst, (OpNode GR16:$src, (load addr:$src2))),
                      (implicit EX)]>;
   def ri: I16ri<OpVal,
                     (outs GR16:$dst), (ins GR16:$src, i16imm:$src2),
-                    OpcStr#"\t{$dst, $src2}",
+                    !strconcat("$dst = $dst ", OpcStr, " $src2"),
                     [(set GR16:$dst, (OpNode GR16:$src, imm:$src2)),
                      (implicit EX)]>;
   }
@@ -384,7 +384,7 @@ let Defs = [EX] in {
   defm AND16   : BASIC_RR_IS_COM <0x0, "AND", and>,  BASIC_NORMAL<0x0, "AND", and>;
   defm OR16    : BASIC_RR_IS_COM <0x0, "BOR", or>,   BASIC_NORMAL<0x0, "BOR", or>;
   defm XOR16   : BASIC_RR_IS_COM <0x0, "XOR", xor>,  BASIC_NORMAL<0x0, "XOR", xor>;
-  defm SUB16   : BASIC_RR_NON_COM<0x0, "SUB", sub>,  BASIC_NORMAL<0x0, "SUB", sub>;
+  defm SUB16   : BASIC_RR_NON_COM<0x0, "-", sub>,  BASIC_NORMAL<0x0, "-", sub>;
   defm MUL16   : BASIC_RR_IS_COM <0x0, "MUL", mul>,  BASIC_NORMAL<0x0, "MUL", mul>;
   defm SMUL16  : BASIC_RR_IS_COM <0x0, "MLI", DCPU16smul>,
                    BASIC_NORMAL<0x0, "MLI", DCPU16smul>;
