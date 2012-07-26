@@ -22,6 +22,8 @@
 #include "llvm/Support/FormattedStream.h"
 using namespace llvm;
 
+#include "JSMemoryPrinter.cpp"
+
 // Include the auto-generated portion of the assembly writer.
 #include "DCPU16GenAsmWriter.inc"
 
@@ -55,10 +57,6 @@ void DCPU16InstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
     assert(Op.isExpr() && "unknown operand kind in printOperand");
     O << *Op.getExpr();
   }
-}
-
-static void printStackAccess(int offset, raw_ostream &O) {
-  O << "HEAP[STACKTOP+" << offset << "]";
 }
 
 void DCPU16InstPrinter::printSrcMemOperand(const MCInst *MI, unsigned OpNo,

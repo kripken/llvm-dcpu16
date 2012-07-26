@@ -37,6 +37,8 @@
 #include "llvm/ADT/SmallString.h"
 using namespace llvm;
 
+#include "JSMemoryPrinter.cpp"
+
 namespace {
   class DCPU16AsmPrinter : public AsmPrinter {
   public:
@@ -122,10 +124,6 @@ void DCPU16AsmPrinter::printOperand(const MachineInstr *MI, int OpNum,
     return;
   }
   }
-}
-
-static void printStackAccess(int offset, raw_ostream &O) {
-  O << "HEAP[STACKTOP+" << offset << "]";
 }
 
 void DCPU16AsmPrinter::printSrcMemOperand(const MachineInstr *MI, int OpNum,
