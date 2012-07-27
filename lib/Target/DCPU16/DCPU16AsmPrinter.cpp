@@ -104,11 +104,11 @@ namespace {
       MCSymbol *GVSym = Mang->getSymbol(GV);
       OutStreamer.EmitLabel(GVSym);
 
-      EMIT("allocate(intArrayFromString(");
+      EMIT("allocate("); // XXX why a newline?
 
       EmitGlobalConstant(GV->getInitializer());
 
-      EMIT("), 'i8', ALLOC_STATIC);");
+      EMIT(", 'i8', ALLOC_STATIC);");
 
 /*
       {
