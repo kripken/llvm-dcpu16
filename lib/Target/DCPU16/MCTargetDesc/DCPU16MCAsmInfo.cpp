@@ -40,6 +40,10 @@ DCPU16MCAsmInfo::DCPU16MCAsmInfo(const Target &T, StringRef TT) {
   // Use .lcomm instead of .local .comm (required for binutils support)
   LCOMMDirectiveType = LCOMM::NoAlignment;
 
-  AsciiDirective = " ";
-  AscizDirective = NULL;
+  AsciiDirective = "";
+  AscizDirective = "";
+  SeparatorString = "/* */";
+  AlignDirective = "// align ";
+  GlobalDirective = "// global ";
+
 }
