@@ -21,6 +21,7 @@
 #include "llvm/MC/MCObjectStreamer.h"
 #include "llvm/MC/MCInst.h"
 #include "llvm/Support/TargetRegistry.h"
+#include "llvm/Support/FormattedStream.h"
 
 #define GET_INSTRINFO_MC_DESC
 #include "DCPU16GenInstrInfo.inc"
@@ -71,46 +72,123 @@ static MCInstPrinter *createDCPU16MCInstPrinter(const Target &T,
   return 0;
 }
 
-static MCStreamer *createDCPU16MCStreamer(const Target &T, StringRef TT,
-                                    MCContext &Ctx, MCAsmBackend &MAB,
-                                    raw_ostream &_OS,
-                                    MCCodeEmitter *_Emitter,
-                                    bool RelaxAll,
-                                    bool NoExecStack) {
-  Triple TheTriple(TT);
+static MCStreamer *createDCPU16Streamer(MCContext &Ctx,
+                                        formatted_raw_ostream &OS,
+                                        bool isVerboseAsm,
+                                        bool useLoc,
+                                        bool useCFI,
+                                        bool useDwarfDirectory,
+                                        MCInstPrinter *InstPrint,
+                                        MCCodeEmitter *CE,
+                                        MCAsmBackend *TAB,
+                                        bool ShowInst) {
+  class DCPU16MCStreamer : public MCStreamer {
+  protected:
+    formatted_raw_ostream &OS;
 
-  class DCPU16MCStreamer : public MCObjectStreamer {
   public:
-    DCPU16MCStreamer(MCContext &Context, MCAsmBackend &MAB,
-                     raw_ostream &OS, MCCodeEmitter *Emitter)
-      : MCObjectStreamer(Context, MAB, OS, Emitter) {}
+    DCPU16MCStreamer(MCContext &Context, formatted_raw_ostream &OS_)
+      : MCStreamer(Context), OS(OS_) {}
 
-    // MCStreamer
+    // MCStreamer implementations
 	  virtual void InitSections() {}
-	  virtual void EmitAssemblerFlag(MCAssemblerFlag) {}
-	  virtual void EmitThumbFunc(MCSymbol*) {}
-	  virtual void EmitAssignment(MCSymbol*, const MCExpr*) {}
-	  virtual void EmitSymbolAttribute(MCSymbol*, MCSymbolAttr) {}
-	  virtual void EmitSymbolDesc(MCSymbol*, unsigned int) {}
-	  virtual void BeginCOFFSymbolDef(const MCSymbol*) {}
-	  virtual void EmitCOFFSymbolStorageClass(int) {}
-	  virtual void EmitCOFFSymbolType(int) {}
-	  virtual void EndCOFFSymbolDef() {}
-	  virtual void EmitELFSize(MCSymbol*, const MCExpr*) {}
-	  virtual void EmitCommonSymbol(MCSymbol*, uint64_t, unsigned int) {}
-	  virtual void EmitLocalCommonSymbol(MCSymbol*, uint64_t, unsigned int) {}
-	  virtual void EmitZerofill(const MCSection*, MCSymbol*, uint64_t, unsigned int) {}
-	  virtual void EmitTBSSSymbol(const MCSection*, MCSymbol*, uint64_t, unsigned int) {}
-	  virtual void EmitBytes(StringRef, unsigned int) {}
-	  virtual void EmitValueToAlignment(unsigned int, int64_t, unsigned int, unsigned int) {}
-	  virtual void EmitCodeAlignment(unsigned int, unsigned int) {}
-	  virtual void EmitFileDirective(StringRef) {}
+	  virtual void EmitAssemblerFlag(MCAssemblerFlag) {
+      OS << "EmitAssemblerFlag\n";
+    }
+	  virtual void EmitThumbFunc(MCSymbol*) {
+      OS << "EmitThumbFunc\n";
+    }
+	  virtual void EmitAssignment(MCSymbol*, const MCExpr*) {
+      OS << "EmitAssignment\n";
+    }
+	  virtual void EmitSymbolAttribute(MCSymbol*, MCSymbolAttr) {
+      OS << "EmitSymbolAttribute\n";
+    }
+	  virtual void EmitSymbolDesc(MCSymbol*, unsigned int) {
+      OS << "EmitSymbolDesc\n";
+    }
+	  virtual void BeginCOFFSymbolDef(const MCSymbol*) {
+      OS << "BeginCOFFSymbolDef\n";
+    }
+	  virtual void EmitCOFFSymbolStorageClass(int) {
+      OS << "EmitCOFFSymbolStorageClass\n";
+    }
+	  virtual void EmitCOFFSymbolType(int) {
+      OS << "EmitCOFFSymbolType\n";
+    }
+	  virtual void EndCOFFSymbolDef() {
+      OS << "EndCOFFSymbolDef\n";
+    }
+	  virtual void EmitELFSize(MCSymbol*, const MCExpr*) {
+      OS << "EmitELFSize\n";
+    }
+	  virtual void EmitCommonSymbol(MCSymbol*, uint64_t, unsigned int) {
+      OS << "EmitCommonSymbol\n";
+    }
+	  virtual void EmitLocalCommonSymbol(MCSymbol*, uint64_t, unsigned int) {
+      OS << "EmitLocalCommonSymbol\n";
+    }
+	  virtual void EmitZerofill(const MCSection*, MCSymbol*, uint64_t, unsigned int) {
+      OS << "EmitZerofill\n";
+    }
+	  virtual void EmitTBSSSymbol(const MCSection*, MCSymbol*, uint64_t, unsigned int) {
+      OS << "EmitTBSSSymbol\n";
+    }
+	  virtual void EmitBytes(StringRef, unsigned int) {
+      OS << "EmitBytes\n";
+    }
+	  virtual void EmitValueToAlignment(unsigned int, int64_t, unsigned int, unsigned int) {
+      OS << "EmitValueToAlignment\n";
+    }
+	  virtual void EmitCodeAlignment(unsigned int, unsigned int) {
+      OS << "EmitCodeAlignment\n";
+    }
+	  virtual void EmitFileDirective(StringRef) {
+      OS << "EmitFileDirective\n";
+    }
+	  virtual void ChangeSection(const llvm::MCSection*) {
+      OS << "ChangeSection\n";
+    }
+	  virtual void EmitWeakReference(llvm::MCSymbol*, const llvm::MCSymbol*) {
+      OS << "EmitWeakReference\n";
+    }
+	  virtual void EmitValueImpl(const llvm::MCExpr*, unsigned int, unsigned int) {
+      OS << "EmitValueImpl\n";
+    }
+	  virtual void EmitULEB128Value(const llvm::MCExpr*) {
+      OS << "EmitULEB128Value\n";
+    }
+	  virtual void EmitSLEB128Value(const llvm::MCExpr*) {
+      OS << "EmitSLEB128Value\n";
+    }
+	  virtual bool EmitValueToOffset(const llvm::MCExpr*, unsigned char) {
+      OS << "EmitValueToOffset\n";
+      return true;
+    }
+	  virtual void EmitDwarfAdvanceLineAddr(int64_t, const llvm::MCSymbol*, const llvm::MCSymbol*, unsigned int) {
+      OS << "EmitDwarfAdvanceLineAddr\n";
+    }
+	  virtual void EmitInstruction(const llvm::MCInst&) {
+      OS << "EmitInstruction\n";
+    }
+	  virtual void FinishImpl() {
+      OS << "FinishImpl\n";
+    }
 
-    // MCObjectStreamer
-    virtual void EmitInstToData(const MCInst&) {}
+    // Modifications
+    inline void EmitEOL() {
+      OS << '\n';
+    }
+
+    void EmitRawText(StringRef String) {
+      if (!String.empty() && String.back() == '\n')
+        String = String.substr(0, String.size()-1);
+      OS << String;
+      EmitEOL();
+    }
   };
 
-  return new DCPU16MCStreamer(Ctx, MAB, _OS, _Emitter);
+  return new DCPU16MCStreamer(Ctx, OS);
 }
 
 extern "C" void LLVMInitializeDCPU16TargetMC() {
@@ -137,6 +215,6 @@ extern "C" void LLVMInitializeDCPU16TargetMC() {
                                         createDCPU16MCInstPrinter);
 
   // Register the object streamer.
-  TargetRegistry::RegisterMCObjectStreamer(TheDCPU16Target, createDCPU16MCStreamer);
+  TargetRegistry::RegisterAsmStreamer(TheDCPU16Target, createDCPU16Streamer);
 }
 
