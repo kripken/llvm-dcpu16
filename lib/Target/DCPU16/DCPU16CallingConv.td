@@ -11,6 +11,10 @@
 
 //===----------------------------------------------------------------------===//
 // DCPU16 Return Value Calling Convention
+//
+// JS goal: Return a 32-bit or double value directly via |return|; for
+//          larger values, use direct value as low 32 bits, registers for
+//          the rest.
 //===----------------------------------------------------------------------===//
 def RetCC_DCPU16 : CallingConv<[
   // Promote i8 return values to i16.
@@ -22,6 +26,10 @@ def RetCC_DCPU16 : CallingConv<[
 
 //===----------------------------------------------------------------------===//
 // DCPU16 Argument Calling Conventions
+//
+// JS goal: Pass 32-bit or double values as normal |(x,y,z)| JS arguments;
+//          for varargs, pass a single argument which is a pointer to the
+//          varargs in memory.
 //===----------------------------------------------------------------------===//
 def CC_DCPU16 : CallingConv<[
   // Promote i8 arguments to i16.
