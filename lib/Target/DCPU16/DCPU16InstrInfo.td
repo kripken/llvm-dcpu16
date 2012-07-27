@@ -240,10 +240,10 @@ let isCall = 1 in
       Uses = [SP] in {
     def CALLi     : II16i<0x0,
                           (outs), (ins i16imm:$dst, variable_ops),
-                          "_$dst()", [(DCPU16call imm:$dst)]>;
+                          "$dst()", [(DCPU16call imm:$dst)]>;
     def CALLr     : II16r<0x0,
                           (outs), (ins GEXR16:$dst, variable_ops),
-                          "_$dst()", [(DCPU16call GEXR16:$dst)]>;
+                          "$dst()", [(DCPU16call GEXR16:$dst)]>;
     def CALLm     : II16m<0x0,
                           (outs), (ins memsrc:$dst, variable_ops),
                           "JSR\t${dst:mem}", [(DCPU16call (load addr:$dst))]>;
