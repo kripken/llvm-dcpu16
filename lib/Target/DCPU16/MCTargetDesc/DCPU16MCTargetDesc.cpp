@@ -18,6 +18,8 @@
 #include "llvm/MC/MCInstrInfo.h"
 #include "llvm/MC/MCRegisterInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
+#include "llvm/MC/MCObjectStreamer.h"
+#include "llvm/MC/MCInst.h"
 #include "llvm/Support/TargetRegistry.h"
 
 #define GET_INSTRINFO_MC_DESC
@@ -69,6 +71,48 @@ static MCInstPrinter *createDCPU16MCInstPrinter(const Target &T,
   return 0;
 }
 
+static MCStreamer *createDCPU16MCStreamer(const Target &T, StringRef TT,
+                                    MCContext &Ctx, MCAsmBackend &MAB,
+                                    raw_ostream &_OS,
+                                    MCCodeEmitter *_Emitter,
+                                    bool RelaxAll,
+                                    bool NoExecStack) {
+  Triple TheTriple(TT);
+
+  class DCPU16MCStreamer : public MCObjectStreamer {
+  public:
+    DCPU16MCStreamer(MCContext &Context, MCAsmBackend &MAB,
+                     raw_ostream &OS, MCCodeEmitter *Emitter)
+      : MCObjectStreamer(Context, MAB, OS, Emitter) {}
+
+    // MCStreamer
+	  virtual void InitSections() {}
+	  virtual void EmitAssemblerFlag(MCAssemblerFlag) {}
+	  virtual void EmitThumbFunc(MCSymbol*) {}
+	  virtual void EmitAssignment(MCSymbol*, const MCExpr*) {}
+	  virtual void EmitSymbolAttribute(MCSymbol*, MCSymbolAttr) {}
+	  virtual void EmitSymbolDesc(MCSymbol*, unsigned int) {}
+	  virtual void BeginCOFFSymbolDef(const MCSymbol*) {}
+	  virtual void EmitCOFFSymbolStorageClass(int) {}
+	  virtual void EmitCOFFSymbolType(int) {}
+	  virtual void EndCOFFSymbolDef() {}
+	  virtual void EmitELFSize(MCSymbol*, const MCExpr*) {}
+	  virtual void EmitCommonSymbol(MCSymbol*, uint64_t, unsigned int) {}
+	  virtual void EmitLocalCommonSymbol(MCSymbol*, uint64_t, unsigned int) {}
+	  virtual void EmitZerofill(const MCSection*, MCSymbol*, uint64_t, unsigned int) {}
+	  virtual void EmitTBSSSymbol(const MCSection*, MCSymbol*, uint64_t, unsigned int) {}
+	  virtual void EmitBytes(StringRef, unsigned int) {}
+	  virtual void EmitValueToAlignment(unsigned int, int64_t, unsigned int, unsigned int) {}
+	  virtual void EmitCodeAlignment(unsigned int, unsigned int) {}
+	  virtual void EmitFileDirective(StringRef) {}
+
+    // MCObjectStreamer
+    virtual void EmitInstToData(const MCInst&) {}
+  };
+
+  return new DCPU16MCStreamer(Ctx, MAB, _OS, _Emitter);
+}
+
 extern "C" void LLVMInitializeDCPU16TargetMC() {
   // Register the MC asm info.
   RegisterMCAsmInfo<DCPU16MCAsmInfo> X(TheDCPU16Target);
@@ -91,4 +135,8 @@ extern "C" void LLVMInitializeDCPU16TargetMC() {
   // Register the MCInstPrinter.
   TargetRegistry::RegisterMCInstPrinter(TheDCPU16Target,
                                         createDCPU16MCInstPrinter);
+
+  // Register the object streamer.
+  TargetRegistry::RegisterMCObjectStreamer(TheDCPU16Target, createDCPU16MCStreamer);
 }
+
