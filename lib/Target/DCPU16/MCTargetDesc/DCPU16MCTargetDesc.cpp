@@ -20,6 +20,7 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/MC/MCObjectStreamer.h"
 #include "llvm/MC/MCInst.h"
+#include "llvm/MC/MCSymbol.h"
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/FormattedStream.h"
 
@@ -101,9 +102,7 @@ static MCStreamer *createDCPU16Streamer(MCContext &Ctx,
 	  virtual void EmitAssignment(MCSymbol*, const MCExpr*) {
       OS << "EmitAssignment\n";
     }
-	  virtual void EmitSymbolAttribute(MCSymbol*, MCSymbolAttr) {
-      OS << "EmitSymbolAttribute\n";
-    }
+	  virtual void EmitSymbolAttribute(MCSymbol*, MCSymbolAttr) {} // don't think we need this
 	  virtual void EmitSymbolDesc(MCSymbol*, unsigned int) {
       OS << "EmitSymbolDesc\n";
     }
@@ -140,15 +139,9 @@ static MCStreamer *createDCPU16Streamer(MCContext &Ctx,
 	  virtual void EmitValueToAlignment(unsigned int, int64_t, unsigned int, unsigned int) {
       OS << "EmitValueToAlignment\n";
     }
-	  virtual void EmitCodeAlignment(unsigned int, unsigned int) {
-      OS << "EmitCodeAlignment\n";
-    }
-	  virtual void EmitFileDirective(StringRef) {
-      OS << "EmitFileDirective\n";
-    }
-	  virtual void ChangeSection(const llvm::MCSection*) {
-      OS << "ChangeSection\n";
-    }
+	  virtual void EmitCodeAlignment(unsigned int, unsigned int) {} // we don't need this
+	  virtual void EmitFileDirective(StringRef) {} // we don't need this
+	  virtual void ChangeSection(const llvm::MCSection*) {} // we don't need this either
 	  virtual void EmitWeakReference(llvm::MCSymbol*, const llvm::MCSymbol*) {
       OS << "EmitWeakReference\n";
     }
@@ -174,8 +167,13 @@ static MCStreamer *createDCPU16Streamer(MCContext &Ctx,
 	  virtual void FinishImpl() {
       OS << "FinishImpl\n";
     }
+    virtual void EmitLabel(MCSymbol *Symbol) {
+      assert(Symbol->isUndefined() && "Cannot define a symbol twice!");
+      MCStreamer::EmitLabel(Symbol);
 
-    // Modifications
+      OS << "var " << *Symbol << " = ";
+    }
+
     inline void EmitEOL() {
       OS << '\n';
     }
