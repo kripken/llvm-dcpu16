@@ -21,8 +21,10 @@
 #include "llvm/MC/MCObjectStreamer.h"
 #include "llvm/MC/MCInst.h"
 #include "llvm/MC/MCSymbol.h"
+#include "llvm/MC/MCContext.h"
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/FormattedStream.h"
+#include "llvm/ADT/OwningPtr.h"
 
 #define GET_INSTRINFO_MC_DESC
 #include "DCPU16GenInstrInfo.inc"
@@ -86,10 +88,16 @@ static MCStreamer *createDCPU16Streamer(MCContext &Ctx,
   class DCPU16MCStreamer : public MCStreamer {
   protected:
     formatted_raw_ostream &OS;
+    const MCAsmInfo &MAI;
+
+  private:
+    OwningPtr<MCInstPrinter> InstPrinter;
 
   public:
-    DCPU16MCStreamer(MCContext &Context, formatted_raw_ostream &OS_)
-      : MCStreamer(Context), OS(OS_) {}
+    DCPU16MCStreamer(MCContext &Context, formatted_raw_ostream &OS_,
+                     MCInstPrinter *InstPrint)
+      : MCStreamer(Context), OS(OS_), MAI(Context.getAsmInfo()),
+        InstPrinter(InstPrint) {}
 
     // MCStreamer implementations
 	  virtual void InitSections() {}
@@ -161,8 +169,13 @@ static MCStreamer *createDCPU16Streamer(MCContext &Ctx,
 	  virtual void EmitDwarfAdvanceLineAddr(int64_t, const llvm::MCSymbol*, const llvm::MCSymbol*, unsigned int) {
       OS << "EmitDwarfAdvanceLineAddr\n";
     }
-	  virtual void EmitInstruction(const llvm::MCInst&) {
-      OS << "EmitInstruction\n";
+	  virtual void EmitInstruction(const llvm::MCInst& Inst) {
+      // If we have an AsmPrinter, use that to print, otherwise print the MCInst.
+      if (InstPrinter)
+        InstPrinter->printInst(&Inst, OS, "");
+      else
+        Inst.print(OS, &MAI);
+      EmitEOL();
     }
 	  virtual void FinishImpl() {
       OS << "FinishImpl\n";
@@ -186,7 +199,7 @@ static MCStreamer *createDCPU16Streamer(MCContext &Ctx,
     }
   };
 
-  return new DCPU16MCStreamer(Ctx, OS);
+  return new DCPU16MCStreamer(Ctx, OS, InstPrint);
 }
 
 extern "C" void LLVMInitializeDCPU16TargetMC() {
