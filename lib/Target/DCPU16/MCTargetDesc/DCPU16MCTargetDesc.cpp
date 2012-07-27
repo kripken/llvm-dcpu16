@@ -141,8 +141,14 @@ static MCStreamer *createDCPU16Streamer(MCContext &Ctx,
 	  virtual void EmitTBSSSymbol(const MCSection*, MCSymbol*, uint64_t, unsigned int) {
       OS << "EmitTBSSSymbol\n";
     }
-	  virtual void EmitBytes(StringRef, unsigned int) {
-      OS << "EmitBytes\n";
+	  virtual void EmitBytes(StringRef Str, unsigned int) {
+      OS << "[";
+      unsigned int Size = Str.size();
+      for (unsigned int i = 0; i < Size; i++) {
+        if (i > 0) OS << ",";
+        OS << (int)Str[i];
+      }
+      OS << "]";
     }
 	  virtual void EmitValueToAlignment(unsigned int, int64_t, unsigned int, unsigned int) {
       OS << "EmitValueToAlignment\n";
@@ -177,9 +183,7 @@ static MCStreamer *createDCPU16Streamer(MCContext &Ctx,
         Inst.print(OS, &MAI);
       EmitEOL();
     }
-	  virtual void FinishImpl() {
-      OS << "FinishImpl\n";
-    }
+	  virtual void FinishImpl() {} // not needed
     virtual void EmitLabel(MCSymbol *Symbol) {
       assert(Symbol->isUndefined() && "Cannot define a symbol twice!");
       MCStreamer::EmitLabel(Symbol);
