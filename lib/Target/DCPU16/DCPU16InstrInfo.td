@@ -176,7 +176,7 @@ def NOP : Pseudo<(outs), (ins), "nop", []>;
 // FIXME: Provide proper encoding!
 let isReturn = 1, isTerminator = 1, isBarrier = 1 in {
   def RET  : IForm16<0x0, DstReg, SrcPostInc, Size2Bytes,
-                     (outs), (ins), "return",  [(DCPU16retflag)]>;
+                     (outs), (ins), "return A",  [(DCPU16retflag)]>;
   def RETI : II16r<0x0, (outs), (ins), "RFI", [(DCPU16retiflag)]>;
 }
 
