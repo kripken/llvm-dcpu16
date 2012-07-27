@@ -91,21 +91,40 @@ namespace {
       AsmPrinter::EmitConstantPool();
     }
 
+    #define EMIT(stuff) \
+      { \
+        SmallString<256> StringData; \
+        raw_svector_ostream OS(StringData); \
+        OS << stuff; \
+        OutStreamer.EmitRawText(OS.str()); \
+      }
+
     /// EmitGlobalVariable - Emit the specified global variable to the .s file.
     virtual void EmitGlobalVariable(const GlobalVariable *GV) {
+      MCSymbol *GVSym = Mang->getSymbol(GV);
+      OutStreamer.EmitLabel(GVSym);
+
+      EMIT("allocate(intArrayFromString(");
+
+      EmitGlobalConstant(GV->getInitializer());
+
+      EMIT("), 'i8', ALLOC_STATIC);");
+
+/*
       {
         SmallString<256> StringData;
         raw_svector_ostream OS(StringData);
-        //OS << "a GLOOOOBALVAR..\n";
+        OS << "a GLOOOOBALVAR..\n";
         OutStreamer.EmitRawText(OS.str());
       }
       AsmPrinter::EmitGlobalVariable(GV);
       {
         SmallString<256> StringData;
         raw_svector_ostream OS(StringData);
-        //OS << "a GLOOOOBALVARed\n";
+        OS << "a GLOOOOBALVARed\n";
         OutStreamer.EmitRawText(OS.str());
       }
+*/
     }
 
   };
