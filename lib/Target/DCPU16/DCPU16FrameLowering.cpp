@@ -89,7 +89,7 @@ void DCPU16FrameLowering::emitPrologue(MachineFunction &MF) const {
 
     if (NumBytes) {
       MachineInstr *MI =
-        BuildMI(MBB, MBBI, DL, TII.get(DCPU16::SUB16ri), DCPU16::SP)
+        BuildMI(MBB, MBBI, DL, TII.get(DCPU16::ADD16ri), DCPU16::SP)
         .addReg(DCPU16::SP).addImm(NumBytes);
       // The SRW implicit def is dead.
       MI->getOperand(3).setIsDead();
@@ -156,7 +156,7 @@ void DCPU16FrameLowering::emitEpilogue(MachineFunction &MF,
     // adjust stack pointer back: SP += numbytes
     if (NumBytes) {
       MachineInstr *MI =
-        BuildMI(MBB, MBBI, DL, TII.get(DCPU16::ADD16ri), DCPU16::SP)
+        BuildMI(MBB, MBBI, DL, TII.get(DCPU16::SUB16ri), DCPU16::SP)
         .addReg(DCPU16::SP).addImm(NumBytes);
       // The SRW implicit def is dead.
       MI->getOperand(3).setIsDead();
