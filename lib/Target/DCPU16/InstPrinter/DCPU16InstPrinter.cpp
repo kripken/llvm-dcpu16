@@ -138,3 +138,9 @@ void DCPU16InstPrinter::printCCOperand(const MCInst *MI, unsigned OpNo,
     break;
   }
 }
+
+void DCPU16InstPrinter::printJSOperand(const MCInst *MI, unsigned OpNo,
+                                       raw_ostream &O) {
+  O << "[JS!!!!]";
+}
+
